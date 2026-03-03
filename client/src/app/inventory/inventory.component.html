@@ -6,6 +6,47 @@
         <mat-card-title class="inventory-title">Inventory</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <mat-form-field appearance="outline">
+        <mat-label>Item</mat-label>
+        <input
+          matInput
+          [ngModel]="item() ?? ''"
+          (ngModelChange)="item.set($event?.trim() || undefined)"
+          placeholder="contains..."
+          data-cy="filter-item"
+        />
+  </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Brand</mat-label>
+        <input
+          matInput
+          [ngModel]="brand() ?? ''"
+          (ngModelChange)="brand.set($event?.trim() || undefined)"
+          placeholder="contains..."
+          data-cy="filter-brand"
+        />
+  </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Color</mat-label>
+        <input
+          matInput
+          [ngModel]="color() ?? ''"
+          (ngModelChange)="color.set($event?.trim() || undefined)"
+          placeholder="contains..."
+          data-cy="filter-color"
+        />
+  </mat-form-field>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="item.set(undefined); brand.set(undefined); color.set(undefined)"
+    data-cy="filter-clear"
+  >
+    Clear
+  </button>
 
       </mat-card-content>
     </mat-card>

@@ -13,7 +13,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
 import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Inventory } from './inventory';
@@ -36,7 +35,6 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
     MatOptionModule,
     MatRadioModule,
     MatListModule,
-    RouterLink,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -60,21 +58,24 @@ export class InventoryComponent {
     });
   }
 
-  // filters (optional)
   item = signal<string | undefined>(undefined);
+  brand = signal<string | undefined>(undefined);
+  color = signal<string | undefined>(undefined);
   description = signal<string | undefined>(undefined);
   quantity = signal<number | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);
 
   private item$ = toObservable(this.item);
+  private brand$ = toObservable(this.brand);
+  private color$ = toObservable(this.color);
   private description$ = toObservable(this.description);
   private quantity$ = toObservable(this.quantity);
 
   serverFilteredInventory = toSignal(
-    combineLatest([this.item$, this.description$, this.quantity$]).pipe(
-      switchMap(([ item, description, quantity]) =>
-        this.inventoryService.getInventory({ item, description, quantity })
+    combineLatest([this.item$, this.brand$, this.color$, this.description$, this.quantity$]).pipe(
+      switchMap(([ item, brand, color, description, quantity]) =>
+        this.inventoryService.getInventory({ item, brand, color, description, quantity })
       ),
       catchError((err) => {
         const msg = `Problem contacting the server - Error Code: ${err.status}\nMessage: ${err.message}`;
