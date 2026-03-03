@@ -13,8 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { RouterLink } from '@angular/router';
-import { catchError, combineLatest, of, switchMap } from 'rxjs';
+import { catchError, combineLatest, debounceTime, of, switchMap } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Inventory } from './inventory';
 import { InventoryService } from './inventory.service';
@@ -36,7 +35,6 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
     MatOptionModule,
     MatRadioModule,
     MatListModule,
-    RouterLink,
     MatButtonModule,
     MatTooltipModule,
     MatIconModule,
@@ -60,26 +58,40 @@ export class InventoryComponent {
     });
   }
 
-  // filters (optional)
   item = signal<string | undefined>(undefined);
+  brand = signal<string | undefined>(undefined);
+  color = signal<string | undefined>(undefined);
+  size = signal<string | undefined>(undefined);
+  type = signal<string | undefined>(undefined);
+  material = signal<string | undefined>(undefined);
   description = signal<string | undefined>(undefined);
   quantity = signal<number | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);
 
   private item$ = toObservable(this.item);
+  private brand$ = toObservable(this.brand);
+  private color$ = toObservable(this.color);
+  private size$ = toObservable(this.size);
+  private type$ = toObservable(this.type);
+  private material$ = toObservable(this.material);
+
   private description$ = toObservable(this.description);
   private quantity$ = toObservable(this.quantity);
 
   serverFilteredInventory = toSignal(
-    combineLatest([this.item$, this.description$, this.quantity$]).pipe(
-      switchMap(([ item, description, quantity]) =>
-        this.inventoryService.getInventory({ item, description, quantity })
+    combineLatest([this.item$, this.brand$, this.color$, this.size$, this.type$, this.material$, this.description$, this.quantity$]).pipe(
+      debounceTime(300),
+      switchMap(([ item, brand, color, size, type, material]) =>
+        this.inventoryService.getInventory({ item, brand, color, size, type, material})
       ),
       catchError((err) => {
-        const msg = `Problem contacting the server - Error Code: ${err.status}\nMessage: ${err.message}`;
-        this.errMsg.set(msg);
-        this.snackBar.open(msg, 'OK', { duration: 6000 });
+        if (!(err.error instanceof ErrorEvent)) {
+          this.errMsg.set(
+            `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`
+          )
+        };
+        this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
         return of<Inventory[]>([]);
       })
     ),

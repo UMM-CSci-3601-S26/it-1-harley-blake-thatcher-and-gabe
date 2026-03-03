@@ -1,6 +1,12 @@
 import { InventoryPage } from "../support/inv.po";
 
 const page = new InventoryPage();
+const Filters_Test = {
+  Item: 'Markers',
+  Brand: 'Crayola',
+  Type: 'Washable',
+  Size: 'Wide'
+}
 
 describe('Inventory', () => {
   beforeEach(() => page.navigateTo());
@@ -35,8 +41,10 @@ describe('Inventory', () => {
     cy.url().should('match', /\/inventory$/);
     page.getSidenav()
       .should('be.hidden');
-    cy.contains('td', 'Backpack').should('exist');
+    nextTick(300)
+    cy.contains('td', 'Test Item').should('exist'); //First item in the table, once 'test item' gets removed, need to update
   });
+
   it('should have pagination controls', () => {
     page.getSidenavButton().click();
     page.getNavLink('Inventory').click();
@@ -59,6 +67,65 @@ describe('Inventory', () => {
     cy.get('@headers').should('contain', 'Count');
     cy.get('@headers').should('contain', 'Quantity');
     cy.get('@headers').should('contain', 'Notes');
+  });
+
+  // Cypress tests to ensure the filter boxes are there
+  // for all specification fields
+
+  it('should have specification filters', () => {
+    page.getSidenavButton().click();
+    page.getNavLink('Inventory').click();
+    cy.url().should('match', /\/inventory$/);
+
+    const errors: string[] = [];
+
+    const recordError = (message: string) => {
+      errors.push(message);
+      cy.log(message);
+      console.warn(message);
+    }
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-cy="filter-item"]').length === 0) {
+        recordError(`Empty filter input for Item`);
+      }
+      if ($body.find('[data-cy="filter-brand"]').length === 0) {
+        recordError(`Empty filter input for Brand`);
+      }
+      if ($body.find('[data-cy="filter-color"]').length === 0) {
+        recordError(`Empty filter input for Color`);
+      }
+      if ($body.find('[data-cy="filter-size"]').length === 0) {
+        recordError(`Empty filter input for Size`);
+      }
+      if ($body.find('[data-cy="filter-type"]').length === 0) {
+        recordError(`Empty filter input for Type`);
+      }
+      if ($body.find('[data-cy="filter-material"]').length === 0) {
+        recordError(`Empty filter input for Material`);
+      }
+    });
+
+    cy.then(() => {
+      if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+      }
+    });
+  });
+  it("Should be able to take an input and display the correct filtered results", () => {
+    page.getSidenavButton().click();
+    page.getNavLink('Inventory').click();
+    cy.url().should('match', /\/inventory$/);
+    cy.get('[data-cy="filter-item"]').type(Filters_Test.Item);
+    cy.get('[data-cy="filter-brand"]').type(Filters_Test.Brand);
+    cy.get('[data-cy="filter-type"]').type(Filters_Test.Type);
+    cy.get('[data-cy="filter-size"]').type(Filters_Test.Size);
+    nextTick(300);
+    page.getInventoryRow().first().within(() => {
+      cy.get('[data-cy="inventory-item"]').should('contain', Filters_Test.Item);
+      cy.get('[data-cy="inventory-brand"]').should('contain', Filters_Test.Brand);
+      cy.get('[data-cy="inventory-type"]').should('contain', Filters_Test.Type);
+      cy.get('[data-cy="inventory-size"]').should('contain', Filters_Test.Size);
+    });
   });
   // it('should report all empty cells across all pages', () => {
   //   page.getSidenavButton().click();
@@ -130,3 +197,8 @@ describe('Inventory', () => {
   //   });
   // });
 });
+
+function nextTick(ms: number) {
+  cy.wait(ms);
+}
+

@@ -1,5 +1,6 @@
 package umm3601.Inventory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +17,10 @@ public class InventorySpec {
   void setupEach() {
     inv1 = new Inventory();
     inv2 = new Inventory();
+
+    inv1.item = "Pencil";
+    inv1.brand = "Ticonderoga";
+    inv1.description = "Ticonderoga Pencil";
   }
 
   @Test
@@ -49,4 +54,21 @@ public class InventorySpec {
     // an Inventory is not equal to its id even though id is used for checking equality
     assertFalse(inv1.equals(FAKE_ID_STRING_1));
   }
+
+
+  @Test
+  void nullId() {
+    inv1._id = null;
+    inv2._id = FAKE_ID_STRING_2;
+
+    assertEquals(inv1.hashCode(), 0);
+    assertFalse(inv1.equals(inv2));
+  }
+
+  @Test
+  void inventoryToString() {
+
+    assertEquals(inv1.toString(), "Pencil Ticonderoga Ticonderoga Pencil");
+  }
+
 }

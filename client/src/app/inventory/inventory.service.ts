@@ -14,25 +14,39 @@ export class InventoryService {
 
   private readonly itemKey = 'item';
   private readonly descriptionKey = 'description';
+  private readonly brandKey = 'brand';
+  private readonly colorKey = 'color';
+  private readonly countKey = 'count';
+  private readonly sizeKey = 'size';
+  private readonly typeKey = 'type';
+  private readonly materialKey = 'material';
   private readonly quantityKey = 'quantity';
-  private readonly propertiesKey = 'properties';
+  private readonly notesKey = 'notes';
 
-  getInventory(filters?: { item?: string; description?: string; quantity?: number; properties?: string[] }): Observable<Inventory[]> {
+  getInventory(filters?: {item?: string; description?: string; brand?: string; color?: string;
+    count?: number; size?: string; type?: string; material?: string; quantity?: number; notes?: string}): Observable<Inventory[]> {
+
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.item) {
         httpParams = httpParams.set(this.itemKey, filters.item);
       }
-      // Filters will come into play on the next branch and pull request
-      // if (filters.description) {
-      //   httpParams = httpParams.set(this.descriptionKey, filters.description);
-      // }
-      // if (filters.quantity !== undefined) {
-      //   httpParams = httpParams.set(this.quantityKey, filters.quantity.toString());
-      // }
-      // if (filters.properties && filters.properties.length > 0) {
-      //   httpParams = httpParams.set(this.propertiesKey, filters.properties.join(','));
-      // }
+      if (filters.brand) {
+        httpParams = httpParams.set(this.brandKey, filters.brand);
+      }
+      if (filters.color) {
+        httpParams = httpParams.set(this.colorKey, filters.color);
+      }
+      if (filters.size) {
+        httpParams = httpParams.set(this.sizeKey, filters.size);
+      }
+      if (filters.type) {
+        httpParams = httpParams.set(this.typeKey, filters.type);
+      }
+      if (filters.material) {
+        httpParams = httpParams.set(this.materialKey, filters.material);
+      }
+
     }
     return this.httpClient.get<Inventory[]>(this.inventoryUrl, { params: httpParams });
   }
