@@ -27,6 +27,36 @@ export class InventoryPage {
     return cy.contains(this.sideNavOption, `${navOption}`);
   }
   getInventoryItem() {
-    return cy.get('.inventory-item');
+    return cy.get('[data-cy="inventory-item"]');
+  }
+  getInventoryBrand() {
+    return cy.get('[data-cy="inventory-brand"]');
+  }
+  getInventoryColor() {
+    return cy.get('[data-cy="inventory-color"]');
+  }
+  getInventorySize() {
+    return cy.get('[data-cy="inventory-size"]');
+  }
+  getInventoryType() {
+    return cy.get('[data-cy="inventory-type"]');
+  }
+  getInventoryMaterial() {
+    return cy.get('[data-cy="inventory-material"]');
+  }
+  getInventoryCount() {
+    return cy.get('[data-cy="inventory-count"]');
+  }
+  getInventoryQuantity() {
+    return cy.get('[data-cy="inventory-quantity"]');
+  }
+  getInventoryNotes() {
+    return cy.get('[data-cy="inventory-notes"]');
+  }
+  getInventoryPaginator() {
+    return cy.get('[data-cy="inventory-paginator"]');
+  }
+  getInventoryRow() {
+    return cy.get('[data-cy="inventory-row"]');
   }
 }

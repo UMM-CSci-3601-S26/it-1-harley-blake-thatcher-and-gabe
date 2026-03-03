@@ -104,6 +104,16 @@ describe('Inventory', () => {
       }
     });
   });
+  it("Should be able to take an input and display the correct filtered results", () => {
+    page.getSidenavButton().click();
+    page.getNavLink('Inventory').click();
+    cy.url().should('match', /\/inventory$/);
+    cy.get('[data-cy="filter-item"]').type('Marker');
+    nextTick(300);
+    page.getInventoryRow().first().within(() => {
+      cy.get('[data-cy="inventory-item"]').should('contain', 'Marker');
+    });
+  });
   // it('should report all empty cells across all pages', () => {
   //   page.getSidenavButton().click();
   //   page.getNavLink('Inventory').click();
