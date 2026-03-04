@@ -11,6 +11,10 @@ const Filters_Test = {
 }
 
 describe('Inventory', () => {
+  before(() => {
+    cy.task('seed:database');
+  });
+
   beforeEach(() => {
     // Intercept the API call before navigating
     cy.intercept('GET', '/api/inventory*').as('getInventory');
@@ -126,19 +130,15 @@ describe('Inventory', () => {
         size: `${Filters_Test.Size}`
       }}).as('filterInventoryWithFilters');
 
-    cy.get('[data-cy="filter-item"]').clear().type(Filters_Test.Item, {delay: 100});
-    cy.get('[data-cy="filter-brand"]').clear().type(Filters_Test.Brand, {delay: 100});
-    cy.get('[data-cy="filter-type"]').clear().type(Filters_Test.Type, {delay: 100});
-    cy.get('[data-cy="filter-size"]').clear().type(Filters_Test.Size, {delay: 100});
+    cy.get('[data-cy="filter-item"]').clear().type(Filters_Test.Item);
+    cy.get('[data-cy="filter-brand"]').clear().type(Filters_Test.Brand);
+    cy.get('[data-cy="filter-type"]').clear().type(Filters_Test.Type);
+    cy.get('[data-cy="filter-size"]').clear().type(Filters_Test.Size);
 
     // Intercept the filtered API calls (won't happen until debounce is done)
     // so we won't need to explicitly wait for debounce
     cy.wait('@filterInventoryWithFilters');
     cy.get(`[data-cy="inventory-table"]`).should('be.visible');
-
-    // Wait for debounce (300ms) + buffer to ensure the final API call is made
-    //cy.wait(500);
-    // Wait for the filtered results to load
 
     // Ensure table has updated with filtered data
     cy.get(`[data-cy="inventory-row"]`).should('have.length.at.least', 1);
