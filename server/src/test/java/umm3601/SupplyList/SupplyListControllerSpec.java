@@ -337,6 +337,19 @@ public class SupplyListControllerSpec {
   }
 
   @Test
+  void canFilterSupplyListByGradeCaseInsensitive() {
+    when(ctx.queryParamMap()).thenReturn(Map.of("grade", List.of("PreK")));
+    when(ctx.queryParam("grade")).thenReturn("PreK");
+    supplylistController.getSupplyLists(ctx);
+
+    verify(ctx).json(supplylistArrayCaptor.capture());
+    verify(ctx).status(HttpStatus.OK);
+
+    assertEquals(3, supplylistArrayCaptor.getValue().size());
+    assertEquals("PreK", supplylistArrayCaptor.getValue().get(0).grade);
+  }
+
+  @Test
   void addsRoutes() {
     Javalin mockServer = mock(Javalin.class);
     supplylistController.addRoutes(mockServer);
