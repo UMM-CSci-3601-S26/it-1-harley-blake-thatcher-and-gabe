@@ -41,7 +41,7 @@ describe('SupplyListService', () => {
       grade: "4th grade",
       item: "Notebook",
       description: "Yellow Wide Ruled Spiral Notebook",
-      brand: "N/A",
+      brand: "Five Star",
       color: "Yellow",
       count: 1,
       size: "Wide Ruled",
@@ -128,6 +128,19 @@ describe('SupplyListService', () => {
         expect(mockedMethod)
           .withContext('talks to the correct endpoint')
           .toHaveBeenCalledWith(supplylistService.supplylistUrl, { params: new HttpParams().set('school', 'Herman') });
+      });
+    });
+
+    it('correctly calls api/inventory with filter parameter \'grade\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testSupplyList));
+
+      supplylistService.getSupplyList({ grade: '4th grade' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(supplylistService.supplylistUrl, { params: new HttpParams().set('grade', '4th grade') });
       });
     });
 
