@@ -3,7 +3,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import umm3601.user.UserController;
 import umm3601.Inventory.InventoryController;
-import umm3601.supplylist.*;
+import umm3601.supplylist.SupplyListController;
 
 public class Main {
 

@@ -41,10 +41,10 @@ public class SupplyListController implements Controller {
   static final String TYPE_KEY = "type";
   static final String SORT_ORDER_KEY = "sortorder";
 
-  private final JacksonMongoCollection<SupplyList> SupplyListCollection;
+  private final JacksonMongoCollection<SupplyList> supplyListCollection;
 
   public SupplyListController(MongoDatabase database) {
-    SupplyListCollection = JacksonMongoCollection.builder().build(
+    supplyListCollection = JacksonMongoCollection.builder().build(
       database,
       "supplylist",
       SupplyList.class,
@@ -57,7 +57,7 @@ public class SupplyListController implements Controller {
     SupplyList supplylistinv;
 
     try {
-      supplylistinv = SupplyListCollection.find(eq("_id", new ObjectId(id))).first();
+      supplylistinv = supplyListCollection.find(eq("_id", new ObjectId(id))).first();
     } catch (IllegalArgumentException e) {
       throw new BadRequestResponse("The requested supply list id wasn't a legal Mongo Object ID.");
     }
@@ -73,7 +73,7 @@ public class SupplyListController implements Controller {
   public void getSupplyLists(Context ctx) {
     Bson filter = constructFilter(ctx);
 
-    FindIterable<SupplyList> results = SupplyListCollection.find(filter);
+    FindIterable<SupplyList> results = supplyListCollection.find(filter);
 
     ArrayList<SupplyList> matching = results.into(new ArrayList<>());
 
