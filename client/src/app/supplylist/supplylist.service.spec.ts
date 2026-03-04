@@ -105,6 +105,19 @@ describe('SupplyListService', () => {
       });
     });
 
+    it('correctly calls api/inventory with filter parameter \'brand\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testSupplyList));
+
+      supplylistService.getSupplyList({ brand: 'Five Star' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(supplylistService.supplylistUrl, { params: new HttpParams().set('brand', 'Five Star') });
+      });
+    });
+
     it('correctly calls api/inventory with filter parameter \'school\'', () => {
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testSupplyList));
 
