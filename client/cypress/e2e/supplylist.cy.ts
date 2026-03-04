@@ -42,7 +42,7 @@ describe('Supply List', () => {
     page.getSidenav()
       .should('be.hidden');
     nextTick(300)
-    cy.contains('mat-list-item', 'Backpack').should('exist');
+    cy.contains('mat-card', 'Herman').should('exist');
   });
 
   // Cypress tests to ensure the filter boxes are there
@@ -61,6 +61,9 @@ describe('Supply List', () => {
       console.warn(message);
     }
     cy.get('body').then(($body) => {
+      if ($body.find('[data-cy="filter-school"]').length === 0) {
+        recordError(`Empty filter input for School`);
+      }
       if ($body.find('[data-cy="filter-item"]').length === 0) {
         recordError(`Empty filter input for Item`);
       }
@@ -84,6 +87,25 @@ describe('Supply List', () => {
     cy.then(() => {
       if (errors.length > 0) {
         throw new Error(errors.join('\n'));
+      }
+    });
+  });
+
+  it('Should have grade filter', () => {
+    page.getSidenavButton().click();
+    page.getNavLink('Supply List').click();
+    cy.url().should('match', /\/supplylist$/);
+
+    const errors: string[] = [];
+
+    const recordError = (message: string) => {
+      errors.push(message);
+      cy.log(message);
+      console.warn(message);
+    }
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-cy="filter-grade"]').length === 0) {
+        recordError(`Empty filter input for Grade`);
       }
     });
   });
