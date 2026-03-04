@@ -126,7 +126,7 @@ describe('Inventory', () => {
 
     // Ensure table has updated with filtered data
     cy.get(`[data-cy="inventory-table"]`).should('be.visible');
-    cy.get(`[data-cy="inventory-item"]`).should('have.length.at.least', 1);
+    cy.get(`[data-cy="inventory-row"]`).should('have.length.at.least', 1);
 
     // Verify all visible items match the filters
     cy.get(`[data-cy="inventory-item"]`).each(e => cy.wrap(e).should('include.text', Filters_Test.Item));
